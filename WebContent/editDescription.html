@@ -1,0 +1,141 @@
+
+<!DOCTYPE html>
+<!--[if lt IE 7 ]> <html lang="en" class="no-js ie6 lt8"> <![endif]-->
+<!--[if IE 7 ]>    <html lang="en" class="no-js ie7 lt8"> <![endif]-->
+<!--[if IE 8 ]>    <html lang="en" class="no-js ie8 lt8"> <![endif]-->
+<!--[if IE 9 ]>    <html lang="en" class="no-js ie9"> <![endif]-->
+<!--[if (gt IE 9)|!(IE)]><!-->
+<html lang="en" class="no-js">
+<!--<![endif]-->
+<head>
+<meta charset="UTF-8" />
+<!-- <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">  -->
+<title>Login and Registration</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description"
+    content="Login and Registration Form with HTML5 and CSS3" />
+<meta name="keywords"
+    content="html5, css3, form, switch, animation, :target, pseudo-class" />
+<meta name="author" content="Codrops" />
+<link rel="stylesheet" type="text/css" href="css/demo.css" />
+<link rel="stylesheet" type="text/css" href="css/style.css" />
+<link rel="stylesheet" type="text/css" href="css/animate-custom.css" />
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+</head>
+<body>
+<script   type="text/javascript">
+window.onload=function(){
+    var b = getCookie("cookieEditDescription");
+    eraseCookie("cookieEditDescription",b);
+    $.getJSON('http://localhost:8080/MeetUp/meetUp/accueil/getGroupInfo/'+b,function(data){
+ 	   $.each(data,function(entryIndex,entry){
+ 		  document.getElementById("groupName").textContent = entry['name'];
+          $('#descriptionEdit').val(entry['description']);
+ 	   });
+ 	});
+}
+
+function setCookie(sName, sValue,days) {
+            var expires;
+         
+            if (days) {
+                var date = new Date();
+                date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+                expires = "; expires=" + date.toGMTString();
+            } else {
+                expires = "";
+            }
+            document.cookie = escape(sName) + "=" + escape(sValue) + expires + "; path=/";
+        }
+        
+function getCookie(sName) {
+            var nameEQ = escape(sName) + "=";
+            var ca = document.cookie.split(';');
+            for (var i = 0; i < ca.length; i++) {
+                var c = ca[i];
+                while (c.charAt(0) === ' ') c = c.substring(1, c.length);
+                if (c.indexOf(nameEQ) === 0) return unescape(c.substring(nameEQ.length, c.length));
+            }
+            return null;
+        }
+         
+function eraseCookie(sName,sValue) {
+	setCookie(sName, sValue, -1);
+}
+function edit(){
+        if (confirm('Your profile will be modified')) {
+            var request = false;
+            try {
+            　		request = new ActiveXObject("Microsoft.XMLHTTP");
+            } catch (trymicrosoft) {
+            　	try {
+    	  	　request = new ActiveXObject("Msxml2.XMLHTTP");
+            } catch (othermicrosoft) {
+            　　     try {
+            　　　		request = new XMLHttpRequest();
+
+            　　		} catch (failed) {
+            　　		　request = false;
+            　		　} 
+                　		}
+            }
+
+       if (!request)
+           {
+           return null;
+           }
+            
+       var url = "http://localhost:8080/MeetUp/meetUp/accueil/editDescription";
+       request.open("post", url, true);
+       request.setRequestHeader("Content-Type", "application/json"); 
+       var a =  '{"group":"' + $("#groupName").text() + '","description":"' + $("#descriptionEdit").val()+'"}';
+       request.send(a);
+            
+            request.onreadystatechange =function(e){
+                if (request.readyState == 4){
+                    if (request.status == 200 ){ 
+                        window.location.replace('main.html');
+                    } 
+                    else {  
+                    }
+                }
+            };
+        }
+}
+    
+
+</script>
+    <div class="container">
+        <header>
+            <h1>
+                <span>Edit description</span>
+            </h1>
+        </header>
+        <section>
+            <div id="container_demo">
+                <div id="wrapper">
+                    <div id="edit" class="animate form">
+                        <form id = "myEdit" name = "myEdit" autocomplete="on">
+                            <h1 id="groupName"></h1>
+                            <p>
+                                <label id="description" for="description" class="description">
+                                    Your description </label>
+                                <textarea id="descriptionEdit" name="descriptionEdit" rows="3" cols="180"></textarea>
+                            </p>
+                            <p class="signin button">
+                                <input type="button" onclick="edit()" value="OK" />
+                            </p>
+                            <p class="change_link">
+                                <a href="javascript:history.go(-1)">Cancel</a>
+                            </p>
+                        </form>
+                        
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+</body>
+</html>
+
+

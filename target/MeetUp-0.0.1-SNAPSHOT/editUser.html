@@ -1,0 +1,163 @@
+
+<!DOCTYPE html>
+<!--[if lt IE 7 ]> <html lang="en" class="no-js ie6 lt8"> <![endif]-->
+<!--[if IE 7 ]>    <html lang="en" class="no-js ie7 lt8"> <![endif]-->
+<!--[if IE 8 ]>    <html lang="en" class="no-js ie8 lt8"> <![endif]-->
+<!--[if IE 9 ]>    <html lang="en" class="no-js ie9"> <![endif]-->
+<!--[if (gt IE 9)|!(IE)]><!-->
+<html lang="en" class="no-js">
+<!--<![endif]-->
+<head>
+<meta charset="UTF-8" />
+<!-- <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">  -->
+<title>Login and Registration</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description"
+    content="Login and Registration Form with HTML5 and CSS3" />
+<meta name="keywords"
+    content="html5, css3, form, switch, animation, :target, pseudo-class" />
+<meta name="author" content="Codrops" />
+<link rel="stylesheet" type="text/css" href="css/demo.css" />
+<link rel="stylesheet" type="text/css" href="css/style.css" />
+<link rel="stylesheet" type="text/css" href="css/animate-custom.css" />
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+</head>
+<body>
+<script   type="text/javascript">
+window.onload=function(){
+    var b = getCookie("cookie");
+    alert(b);
+    $.getJSON('http://localhost:8080/MeetUp/meetUp/accueil/getUser/'+b,function(data){
+               $.each(data,function(entryIndex,entry){
+                       alert(entry['firstname']);
+                       document.getElementById("firstnamesignup").value = entry['firstname'];
+                       document.getElementById("lastnamesignup").value = entry['lastname'];
+                       $('#biographie').val(entry['biography']);
+               });
+            });
+}
+
+function setCookie(sName, sValue,days) {
+            var expires;
+         
+            if (days) {
+                var date = new Date();
+                date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+                expires = "; expires=" + date.toGMTString();
+            } else {
+                expires = "";
+            }
+            document.cookie = escape(sName) + "=" + escape(sValue) + expires + "; path=/";
+        }
+        
+function getCookie(sName) {
+            var nameEQ = escape(sName) + "=";
+            var ca = document.cookie.split(';');
+            for (var i = 0; i < ca.length; i++) {
+                var c = ca[i];
+                while (c.charAt(0) === ' ') c = c.substring(1, c.length);
+                if (c.indexOf(nameEQ) === 0) return unescape(c.substring(nameEQ.length, c.length));
+            }
+            return null;
+        }
+         
+        function eraseCookie(sName) {
+            createCookie(sName, "", -1);
+        }
+function edit(){
+        if (confirm('Your profile will be modified')) {
+            var request = false;
+            try {
+            　request = new ActiveXObject("Microsoft.XMLHTTP");
+            } catch (trymicrosoft) {
+            　try {
+            　　request = new ActiveXObject("Msxml2.XMLHTTP");
+            　} catch (othermicrosoft) {
+            　　try {
+            　　　request = new XMLHttpRequest();
+
+            　　} catch (failed) {
+            　　　request = false;
+            　　} 
+                　}
+            }
+
+            if (!request)
+                {
+                alert("Error initializing XMLHttpRequest!");
+                return null;
+                }
+            
+            var url = "http://localhost:8080/MeetUp/meetUp/accueil/editUser";
+            request.open("post", url, true);
+            request.setRequestHeader("Content-Type", "application/json"); 
+            var c = getCookie("cookie");
+            var a =  '{"firstname":"' + $("#firstnamesignup").val() + '","lastname":"' + $("#lastnamesignup").val() + '","biography":"' + $("#biographie").val() + '","email":"' + c + '"}';
+            alert(a);
+            request.send(a);
+            
+            request.onreadystatechange =function(e){
+                if (request.readyState == 4){
+                    if (request.status == 200 ){ 
+                        alert("Profile modified")
+                        window.location.replace('profile.html');
+                    } 
+                    else {
+                            alert("Request was unsuccessful: " + request.status + request.responseText);
+                         window.location.replace('main.html');
+                        
+                    }
+                }
+            };
+                }
+        else  window.location.replace('profile.html');
+}
+    
+
+</script>
+    <div class="container">
+        <header>
+            <h1>
+                <span>Edit</span>
+            </h1>
+        </header>
+        <section>
+            <div id="container_demo">
+                <div id="wrapper">
+                    <div id="edit" class="animate form">
+                        <form id = "myEdit" name = "myEdit" autocomplete="on">
+                            <h1>Edit your profile</h1>
+                            <p>
+                                <label id="firstname" for="firstname" class="uname" data-icon="u">Your
+                                    first name</label> <input id="firstnamesignup" name="firstnamesignup"
+                                    required="required" type="text" placeholder="myfirstname" value="firstname"/>
+                            </p>
+                            <p>
+                                <label id="lastname" for="lastname" class="uname" data-icon="u">Your
+                                    last name</label> <input id="lastnamesignup" name="lastnamesignup"
+                                    required="required" type="text" placeholder="mylastname" value="lastname"/>
+                            </p>
+                            <p>
+                                <label id="biography" for="biography" class="biography">
+                                    Your biography </label>
+                                <textarea id="biographie" name="biographie" 
+                                    placeholder="mybiography" rows="3" cols="60"> 
+                                    </textarea>
+                            </p>
+                            <p class="signin button">
+                                <input type="button" onclick="edit()" value="OK" />
+                            </p>
+                            <p class="change_link">
+                                <a href="javascript:history.go(-1)">Cancel</a>
+                            </p>
+                        </form>
+                        
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+</body>
+</html>
+
+
